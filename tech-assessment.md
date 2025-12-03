@@ -17,13 +17,13 @@ Fornecer uma solução simples, testável e extensível para habilitar/desabilit
 
 Incluso:
 - **Cadastro de Atributos**: CRUD completo para registrar tipos de atributos (ex.: `userId`, `currency`, `supplierId`) com nomes únicos.
-- **Cadastro de Toggles**: CRUD completo com nome, estado, estratégia, vinculação de atributos com valores válidos, e suporte a block list e allow list por atributo.
+- **Cadastro de Toggles**: CRUD completo com nome, estado, vinculação a um único atributo e manutenção de uma allow list de valores autorizados para esse atributo.
 - **API HTTP REST** para:
   - CRUD de atributos
   - CRUD de toggles
-  - Avaliação de toggles (`GET /api/toggles/{name}/evaluate?attr1=value1&attr2=value2`)
-- **Notificação de clientes**: ao alterar uma toggle ou atributo, notificar clientes registrados chamando seus endpoints de webhook.
-- **Auditoria**: registrar quem, quando e o quê foi alterado.
+  - Avaliação de toggles (`GET /api/toggles/{name}/evaluate?value=foo`)
+- **Notificação de clientes**: clientes se registram via `POST /api/clients/register` informando um endpoint `PUT` e a lista de toggles que acompanham; ao alterar uma toggle/atributo, o servidor notifica somente os inscritos com uma requisição `PUT` contendo o novo valor.
+- **Auditoria**: registrar quando e o quê foi alterado (sem rastrear usuário nesta fase).
 
 Fora do escopo (fases posteriores):
 - UI avançada de administração (API será suficiente).
@@ -36,7 +36,7 @@ Incluso:
   - **Eager**: busca todas as toggles e atributos no startup e mantém em cache local.
   - **Lazy**: consulta o servidor a cada solicitação.
 - **Cache local**: armazenar em memória o estado das toggles e atributos.
-- **Endpoint de webhook**: expor um endpoint (ex.: `POST /_toggle/notify`) que o servidor chama para notificar atualizações.
+- **Endpoint de webhook**: expor um endpoint `PUT` (ex.: `PUT /_toggle/notify`) que recebe payload JSON com campos como `toggle`, `enabled` e `value` enviados pelo servidor a cada atualização.
 - **Atualização automática**: ao receber notificação, recarregar dados do servidor e atualizar cache.
 - **API simples**: expor métodos/anotações para a aplicação cliente consultar o estado de uma toggle.
 - **Mecanismo de ready state**: indicar quando o cache está pronto (útil para modo eager).
@@ -54,18 +54,31 @@ Fora do escopo (fases posteriores):
    - Retornar lista de atributos cadastrados.
 
 2. **CRUD de Toggles**:
-   - Criar toggle com nome, descrição, status (ON/OFF) e vinculação de variáveis de controle.
-   - Cada vinculação define quais valores são válidos para o atributo naquela toggle.
-   - Retornar lista de todas as toggles com suas configurações.
+   - Criar toggle com nome, descrição, status (ON/OFF) e exatamente um `attributeId` previamente cadastrado.
+   - Após criada, permitir adicionar/remover valores da allow list para esse atributo via endpoints específicos.
+   - Retornar lista de todas as toggles com suas configurações (estado, atributo e allow list).
+   - Exemplo de payload de criação:
+
+```json
+{
+  "name": "toggle-teste",
+  "description": "exemplo",
+  "enabled": true,
+  "attributeId": "attribute-uuid",
+  "allowList": ["foo", "bar"]
+}
+```
 
 3. **Avaliação de Toggle**:
-   - Endpoint: `GET /api/toggles/{name}/evaluate?attr1=value1&attr2=value2`
-   - Retorna `{ enabled: true/false, reason: "..." }` baseado na estratégia e valores fornecidos.
-   - Lógica de avaliação: se o valor está em **allow list**, retorna `true`; se está em **block list**, retorna `false`; senão, aplica a estratégia definida (ex: percentual).
+   - Endpoint: `GET /api/toggles/{name}/evaluate?value=foo`
+   - Retorna `{ enabled: true/false, reason: "..." }` baseado apenas em `enabled` e na allow list da toggle.
+   - Lógica de avaliação: se a toggle estiver `enabled=true` e o valor estiver presente na allow list, retorna `true`; caso contrário, `false`.
 
-4. **Registro de clientes**: manter lista de clientes registrados (URL de webhook) para notificação de atualizações de toggles e atributos.
+4. **Registro de clientes**:
+   - Clientes chamam `POST /api/clients/register` informando URL de callback `PUT` e as toggles que acompanham.
+   - O servidor mantém essa lista e, ao detectar alteração, chama apenas os clientes inscritos com uma requisição `PUT` contendo o novo valor no corpo.
 
-5. **Auditoria**: registrar logs de mudanças (quem, quando, o quê).
+5. **Auditoria**: registrar logs de mudanças com quando e o quê foi alterado (sem identificação de usuário nesta fase).
 
 ### Biblioteca Cliente
 
@@ -87,8 +100,7 @@ Fora do escopo (fases posteriores):
 ## Requisitos Não-Funcionais
 
 - Latência de consulta baixa (objetivo: < 20ms para respostas de cache local; < 200ms para consulta remota razoável).
-- Alta disponibilidade do servidor (opcionalmente com replicação e balanceamento).
-- Segurança: autenticação/autorizações para operações de escrita; leitura pública pode ser opcionalmente protegida.
+- Segurança: autenticação simples via API key enviada em header (`X-API-Key`) obrigatória para todas as chamadas (leitura e escrita).
 - Observabilidade: métricas (requests, latência, taxa de cache-miss), logs e traces básicos.
 - Documentação e testes automatizados (unit + integração).
 
@@ -113,10 +125,10 @@ Fora do escopo (fases posteriores):
   - Publicação de eventos de alteração
 
 - **Camada de Persistência** (JPA)
-  - Entidades: `Attribute`, `Toggle`, `ToggleRule`, `AuditLog`
+  - Entidades: `Attribute`, `Toggle`, `AuditLog`
 
 - **Sistema de Notificações**
-  - Mecanismo para chamar webhooks de clientes registrados quando há alterações
+  - Mecanismo para chamar webhooks `PUT` dos clientes registrados e inscritos naquela toggle, enviando o novo valor e metadados da atualização
 
 ### Biblioteca Cliente (Spring Boot Starter)
 
@@ -135,10 +147,10 @@ Fora do escopo (fases posteriores):
   - Comunicação com servidor (RestTemplate ou WebClient)
 
 - **Endpoint de Notificação**
-  - Expõe `POST /_toggle/notify` para receber notificações do servidor
-  - Ao receber, recarrega toggles e atributos
+  - Expõe `PUT /_toggle/notify` para receber notificações do servidor com payload JSON (`toggle`, `enabled`, `value`, etc.).
+  - Ao receber, recarrega toggles e atributos e aplica o novo valor recebido.
 
-- **Registro automático**: ao iniciar, registra-se no servidor com sua URL de callback
+- **Registro automático**: ao iniciar, registra-se no servidor com sua URL de callback `PUT` e lista das toggles de interesse.
 
 ### Endpoints da API
 
@@ -151,24 +163,22 @@ Fora do escopo (fases posteriores):
 **Servidor - Toggles**:
 - `GET /api/toggles` — retorna lista de toggles e suas configurações (Eager)
 - `GET /api/toggles/{name}` — retorna toggle específica
-- `GET /api/toggles/{name}/evaluate?attr1=value1&attr2=value2` — avalia toggle para valores fornecidos
+- `GET /api/toggles/{name}/evaluate?value=foo` — avalia toggle para o valor fornecido do atributo vinculado
 - `POST /api/toggles` — cria toggle (admin)
 - `PUT /api/toggles/{name}` — atualiza toggle (admin)
 - `DELETE /api/toggles/{name}` — remove toggle (admin)
 
-**Servidor - Allow List e Block List** (por toggle e atributo):
-- `POST /api/toggles/{name}/attributes/{attributeId}/allow-list` — adiciona valor à allow list (admin)
-- `DELETE /api/toggles/{name}/attributes/{attributeId}/allow-list/{value}` — remove valor da allow list (admin)
-- `POST /api/toggles/{name}/attributes/{attributeId}/block-list` — adiciona valor à block list (admin)
-- `DELETE /api/toggles/{name}/attributes/{attributeId}/block-list/{value}` — remove valor da block list (admin)
+**Servidor - Allow List** (por toggle):
+- `POST /api/toggles/{name}/allow-list` — adiciona valor à allow list (admin)
+- `DELETE /api/toggles/{name}/allow-list/{value}` — remove valor da allow list (admin)
 
 **Servidor - Gerenciamento de Clientes**:
-- `POST /api/clients/register` — cliente se registra com sua URL de callback (ex.: `{ "callbackUrl": "http://cliente:8080/_toggle/notify" }`)
+- `POST /api/clients/register` — cliente se registra informando sua URL de callback `PUT` e as toggles que deseja acompanhar (ex.: `{ "callbackUrl": "http://cliente:8080/_toggle/notify", "toggles": ["feature-a","feature-b"] }`)
 - `DELETE /api/clients/{clientId}` — cliente se desregistra
 - `GET /api/toggles/{name}/clients` — retorna lista de clientes conectados que dependem da toggle (admin)
 
 **Cliente - Notificação de Atualização** (exposto pela biblioteca):
-- `POST /_toggle/notify` — servidor chama para notificar alterações (ex.: `{ "type": "toggle_updated", "toggleId": "..." }`)
+- `PUT /_toggle/notify` — servidor chama para notificar alterações enviando payload JSON com `toggle`, `enabled` e `value`.
 
 ## Modelo de Dados (exemplo)
 
@@ -176,37 +186,27 @@ Fora do escopo (fases posteriores):
 - id: UUID
 - name: string (unique, ex.: "userId", "currency", "supplierId")
 - description: string (opcional)
-- dataType: enum (STRING, NUMBER, BOOLEAN, etc.)
-- createdAt, updatedAt, updatedBy
+- dataType: enum (STRING, NUMBER, DATE)
+- createdAt, updatedAt
 
 **Toggle**:
 - id: UUID
 - name: string (unique)
 - description: string
 - enabled: boolean
-- strategy: enum (GLOBAL, CONDITIONAL, PERCENTAGE)
-- attributeRules: List of { attributeId, allowedValues: List<String>, allowList: List<String>, blockList: List<String> }
-  - Exemplo: `{ attributeId: "userId-uuid", allowedValues: ["123", "456"], allowList: ["999"], blockList: ["111"] }`
-  - `allowList`: valores que SEMPRE ativam a toggle (override)
-  - `blockList`: valores que NUNCA ativam a toggle (override)
-  - `allowedValues`: valores base para a estratégia
-- createdAt, updatedAt, updatedBy
+- attributeId: UUID de um atributo previamente cadastrado (obrigatório no ato da criação da toggle)
+- allowList: List<String> com valores autorizados para o atributo
+- createdAt, updatedAt
 
 **Avaliação de Toggle**:
-- Uma toggle com GLOBAL retorna sempre `true` se `enabled=true`, exceto se o valor está em **block list**.
-- Uma toggle com CONDITIONAL retorna `true` se `enabled=true` **E**:
-  - Se o valor está em **allow list**, retorna `true` (override positivo).
-  - Se o valor está em **block list**, retorna `false` (override negativo).
-  - Senão, verifica se o valor corresponde aos **allowedValues** (aplica a estratégia).
-- Uma toggle com PERCENTAGE retorna `true` se `enabled=true` **E**:
-  - Se o valor está em **allow list**, retorna `true` (override positivo).
-  - Se o valor está em **block list**, retorna `false` (override negativo).
-  - Senão, aplica hash do valor para determinar se cai no percentual definido (ex: 10% dos usuários).
+- Cada toggle avalia somente o valor do atributo vinculado. Caso o parâmetro correspondente não seja enviado, o resultado padrão é `false`.
+- Se `enabled=false`, sempre retorna `false`.
+- Se `enabled=true`, retorna `true` quando o valor informado aparece na allow list; caso contrário, `false`.
 
 ## Critérios de Avaliação / Sucesso
 
 - Implementação mínima do servidor com CRUD de atributos e toggles.
-- Endpoint de avaliação de toggle funcionando corretamente com múltiplos atributos.
+- Endpoint de avaliação de toggle funcionando corretamente considerando o atributo vinculado, allow list e flag `enabled`.
 - Biblioteca cliente com `eager` e `lazy` funcionando e cache local.
 - Notificações de atualização básicas funcionando entre servidor e cliente (via webhook).
 - Testes automatizados cobrindo casos principais (avaliação com múltiplos cenários).
@@ -245,4 +245,3 @@ mvn spring-boot:run
 ---
 
 Se quiser, eu já crio o scaffold inicial do projeto (módulos Maven/Gradle, `README`, e um pequeno exemplo de servidor + cliente). Diga se prefere Maven ou Gradle e se quer Docker Compose para o banco.
-
