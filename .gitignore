@@ -1,0 +1,13 @@
+# Maven/Gradle build outputs
+target/
+server/target/
+
+# IDE files
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+
+# OS artifacts
+.DS_Store
