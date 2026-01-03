@@ -183,18 +183,16 @@ Fora do escopo (fases posteriores):
 ## Modelo de Dados (exemplo)
 
 **Attribute**:
-- id: UUID
-- name: string (unique, ex.: "userId", "currency", "supplierId")
+- id: nome é a chave primária (string única, ex.: "userId", "currency", "supplierId")
 - description: string (opcional)
 - dataType: enum (STRING, NUMBER, DATE)
 - createdAt, updatedAt
 
 **Toggle**:
-- id: UUID
-- name: string (unique)
+- id: nome é a chave primária (string única)
 - description: string
 - enabled: boolean
-- attributeId: UUID de um atributo previamente cadastrado (obrigatório no ato da criação da toggle)
+- attributeName: referência ao atributo previamente cadastrado (obrigatório no ato da criação da toggle)
 - allowList: List<String> com valores autorizados para o atributo
 - createdAt, updatedAt
 

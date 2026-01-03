@@ -3,16 +3,16 @@
 Lista de tarefas para implementar o servidor de feature toggles no ecossistema Spring.
 
 ## Fase 1 — Fundamentos
-- [ ] Configurar projeto Spring Boot (Gradle/Maven), modules separados se necessário.
-- [ ] Adicionar dependências: Web, JPA, H2 (dev), PostgreSQL (prod opcional), Validation, Actuator, Lombok (opcional).
-- [ ] Configurar segurança simples por `X-API-Key` via filtro.
-- [ ] Estruturar perfis `dev` e `test` (H2), `prod` (Postgres).
+- [x] Configurar projeto Spring Boot (Gradle/Maven), modules separados se necessário.
+- [x] Adicionar dependências: Web, JPA, H2 (dev), PostgreSQL (prod opcional), Validation, Actuator, Lombok (opcional).
+- [x] Configurar segurança simples por `X-API-Key` via filtro.
+- [x] Estruturar perfis `dev` e `test` (H2), `prod` (Postgres).
 
 ## Fase 2 — Domínio e Persistência
-- [ ] Modelos JPA: `Attribute`, `Toggle`, `AllowListEntry` (ou jsonb), `ClientRegistration`, `AuditLog`.
-- [ ] Regras: unicidade de nome de atributo e toggle, `Toggle` deve referenciar `Attribute`.
-- [ ] Repositórios JPA para todas as entidades.
-- [ ] Migrações (Flyway/Liquibase) para tabelas e índices principais.
+- [x] Modelos JPA: `Attribute`, `Toggle`, `AllowListEntry` (ou jsonb), `ClientRegistration`, `AuditLog`.
+- [x] Regras: unicidade de nome de atributo e toggle, `Toggle` deve referenciar `Attribute`.
+- [x] Repositórios JPA para todas as entidades.
+- [x] Migrações (Flyway/Liquibase) para tabelas e índices principais.
 
 ## Fase 3 — Serviços e Regras de Negócio
 - [ ] Serviço de atributos (CRUD com validações).
