@@ -15,11 +15,11 @@ Lista de tarefas para implementar o servidor de feature toggles no ecossistema S
 - [x] Migrações (Flyway/Liquibase) para tabelas e índices principais.
 
 ## Fase 3 — Serviços e Regras de Negócio
-- [ ] Serviço de atributos (CRUD com validações).
-- [ ] Serviço de toggles (CRUD, gestão de allow list).
-- [ ] Serviço de avaliação: `enabled && value in allowList`; default false se valor ausente.
-- [ ] Serviço de registro de clientes (inscrição por toggle, remoção).
-- [ ] Orquestrador de notificação: ao alterar toggle/atributo/allow list, disparar eventos para clientes inscritos.
+- [x] Serviço de atributos (CRUD com validações).
+- [x] Serviço de toggles (CRUD, gestão de allow list).
+- [x] Serviço de avaliação: `enabled && value in allowList`; default false se valor ausente.
+- [x] Serviço de registro de clientes (inscrição por toggle, remoção).
+- [x] Orquestrador de notificação: ao alterar toggle/atributo/allow list, disparar eventos para clientes inscritos.
 
 ## Fase 4 — API REST
 - [ ] Controllers para atributos (`/api/attributes` CRUD).

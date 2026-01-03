@@ -1,0 +1,137 @@
+package com.fnl33.featuretoggle.service;
+
+import com.fnl33.featuretoggle.domain.AllowListEntry;
+import com.fnl33.featuretoggle.domain.Attribute;
+import com.fnl33.featuretoggle.domain.Toggle;
+import com.fnl33.featuretoggle.repository.AllowListEntryRepository;
+import com.fnl33.featuretoggle.repository.AttributeRepository;
+import com.fnl33.featuretoggle.repository.ToggleRepository;
+import com.fnl33.featuretoggle.service.exception.AllowListEntryNotFoundException;
+import com.fnl33.featuretoggle.service.exception.AttributeNotFoundException;
+import com.fnl33.featuretoggle.service.exception.ToggleNotFoundException;
+import com.fnl33.featuretoggle.service.exception.ValidationException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+@Service
+@RequiredArgsConstructor
+@Transactional
+public class ToggleService {
+
+    private final ToggleRepository toggleRepository;
+    private final AttributeRepository attributeRepository;
+    private final AllowListEntryRepository allowListEntryRepository;
+    private final NotificationOrchestrator notificationOrchestrator;
+
+    @Transactional(readOnly = true)
+    public List<Toggle> findAll() {
+        return toggleRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public Toggle findByName(String name) {
+        return toggleRepository.findById(name)
+                .orElseThrow(() -> new ToggleNotFoundException(name));
+    }
+
+    public Toggle create(String name, String description, boolean enabled, String attributeName, List<String> allowListValues) {
+        validateToggleName(name);
+        if (toggleRepository.existsByName(name)) {
+            throw new ValidationException("Toggle with name %s already exists".formatted(name));
+        }
+        Attribute attribute = resolveAttribute(attributeName);
+        Toggle toggle = Toggle.builder()
+                .name(name)
+                .description(description)
+                .enabled(enabled)
+                .attribute(attribute)
+                .build();
+        syncAllowList(toggle, allowListValues);
+        Toggle saved = toggleRepository.save(toggle);
+        notificationOrchestrator.notifyToggleChange(saved, null);
+        return saved;
+    }
+
+    public Toggle update(String name, String description, boolean enabled, String attributeName, List<String> allowListValues) {
+        Toggle existing = findByName(name);
+        Attribute attribute = resolveAttribute(attributeName);
+        existing.setDescription(description);
+        existing.setEnabled(enabled);
+        existing.setAttribute(attribute);
+        syncAllowList(existing, allowListValues);
+        Toggle saved = toggleRepository.save(existing);
+        notificationOrchestrator.notifyToggleChange(saved, null);
+        return saved;
+    }
+
+    public void delete(String name) {
+        Toggle existing = findByName(name);
+        toggleRepository.delete(existing);
+        notificationOrchestrator.notifyToggleChange(existing, null);
+    }
+
+    public AllowListEntry addAllowListEntry(String toggleName, String value) {
+        Toggle toggle = findByName(toggleName);
+        validateAllowListValue(value);
+        if (allowListEntryRepository.existsByToggle_NameAndValue(toggleName, value)) {
+            throw new ValidationException("Value already present in allow list for toggle %s".formatted(toggleName));
+        }
+        AllowListEntry entry = AllowListEntry.builder()
+                .toggle(toggle)
+                .value(value)
+                .build();
+        toggle.getAllowList().add(entry);
+        Toggle saved = toggleRepository.save(toggle);
+        notificationOrchestrator.notifyToggleChange(saved, value);
+        return entry;
+    }
+
+    public void removeAllowListEntry(String toggleName, String value) {
+        Toggle toggle = findByName(toggleName);
+        AllowListEntry entry = allowListEntryRepository.findByToggle_NameAndValue(toggleName, value)
+                .orElseThrow(() -> new AllowListEntryNotFoundException(toggleName, value));
+        toggle.getAllowList().remove(entry);
+        allowListEntryRepository.delete(entry);
+        notificationOrchestrator.notifyToggleChange(toggle, value);
+    }
+
+    private Attribute resolveAttribute(String attributeName) {
+        if (attributeName == null || attributeName.isBlank()) {
+            throw new ValidationException("Attribute name is required");
+        }
+        return attributeRepository.findByName(attributeName)
+                .orElseThrow(() -> new AttributeNotFoundException(attributeName));
+    }
+
+    private void syncAllowList(Toggle toggle, List<String> allowListValues) {
+        toggle.getAllowList().clear();
+        if (allowListValues == null || allowListValues.isEmpty()) {
+            return;
+        }
+        Set<String> uniqueValues = new HashSet<>();
+        for (String value : allowListValues) {
+            validateAllowListValue(value);
+            if (!uniqueValues.add(value)) {
+                throw new ValidationException("Duplicate allow list value: %s".formatted(value));
+            }
+            toggle.getAllowList().add(AllowListEntry.builder().toggle(toggle).value(value).build());
+        }
+    }
+
+    private void validateAllowListValue(String value) {
+        if (value == null || value.isBlank()) {
+            throw new ValidationException("Allow list value is required");
+        }
+    }
+
+    private void validateToggleName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new ValidationException("Toggle name is required");
+        }
+    }
+}
