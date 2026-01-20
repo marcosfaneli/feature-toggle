@@ -59,6 +59,20 @@ public class ClientRegistrationService {
         return clientRegistrationRepository.findByTogglesContains(toggleName);
     }
 
+    public ClientRegistration updateClientToggles(UUID id, Set<String> toggleNames) {
+        ClientRegistration client = findById(id);
+        
+        // Validate all toggles exist
+        for (String toggleName : toggleNames) {
+            if (!toggleRepository.existsByName(toggleName)) {
+                throw new ToggleNotFoundException(toggleName);
+            }
+        }
+        
+        client.setToggles(new HashSet<>(toggleNames));
+        return clientRegistrationRepository.save(client);
+    }
+
     private void validateCallbackUrl(String callbackUrl) {
         if (callbackUrl == null || callbackUrl.isBlank()) {
             throw new ValidationException("Callback URL is required");
