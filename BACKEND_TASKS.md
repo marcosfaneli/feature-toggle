@@ -22,11 +22,11 @@ Lista de tarefas para implementar o servidor de feature toggles no ecossistema S
 - [x] Orquestrador de notificação: ao alterar toggle/atributo/allow list, disparar eventos para clientes inscritos.
 
 ## Fase 4 — API REST
-- [ ] Controllers para atributos (`/api/attributes` CRUD).
-- [ ] Controllers para toggles (`/api/toggles` CRUD + allow list endpoints).
-- [ ] Endpoint de avaliação (`GET /api/toggles/{name}/evaluate?value=foo`).
-- [ ] Endpoints de clientes (`POST /api/clients/register`, `DELETE /api/clients/{id}`, `GET /api/toggles/{name}/clients`).
-- [ ] Respostas padronizadas (DTOs) e erros em formato problem-details.
+- [x] Controllers para atributos (`/api/attributes` CRUD).
+- [x] Controllers para toggles (`/api/toggles` CRUD + allow list endpoints).
+- [x] Endpoint de avaliação (`GET /api/toggles/{name}/evaluate?value=foo`).
+- [x] Endpoints de clientes (`POST /api/clients/register`, `DELETE /api/clients/{id}`, `GET /api/toggles/{name}/clients`).
+- [x] Respostas padronizadas (DTOs) e erros em formato problem-details.
 
 ## Fase 5 — Notificações
 - [ ] Implementar envio `PUT` assíncrono para clientes inscritos (callback + toggles de interesse).
