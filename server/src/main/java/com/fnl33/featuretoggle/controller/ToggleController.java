@@ -34,7 +34,7 @@ public class ToggleController {
     public ResponseEntity<ToggleResponse> createToggle(@Valid @RequestBody ToggleRequest request) {
         logger.info("Creating toggle: {}", request.name());
         
-        Toggle toggle = toggleService.create(
+        final Toggle toggle = toggleService.create(
                 request.name(),
                 request.description(),
                 request.enabled(),
@@ -42,7 +42,7 @@ public class ToggleController {
                 request.allowListValues()
         );
         
-        ToggleResponse response = ToggleResponse.from(toggle);
+        final ToggleResponse response = ToggleResponse.from(toggle);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -50,7 +50,7 @@ public class ToggleController {
     public ResponseEntity<List<ToggleResponse>> getAllToggles() {
         logger.debug("Fetching all toggles");
         
-        List<ToggleResponse> toggles = toggleService.findAll()
+        final List<ToggleResponse> toggles = toggleService.findAll()
                 .stream()
                 .map(ToggleResponse::from)
                 .collect(Collectors.toList());
@@ -62,8 +62,8 @@ public class ToggleController {
     public ResponseEntity<ToggleResponse> getToggleByName(@PathVariable String name) {
         logger.debug("Fetching toggle by name: {}", name);
         
-        Toggle toggle = toggleService.findByName(name);
-        ToggleResponse response = ToggleResponse.from(toggle);
+        final Toggle toggle = toggleService.findByName(name);
+        final ToggleResponse response = ToggleResponse.from(toggle);
         
         return ResponseEntity.ok(response);
     }
@@ -75,7 +75,7 @@ public class ToggleController {
         
         logger.info("Updating toggle name: {}", name);
         
-        Toggle toggle = toggleService.update(
+        final Toggle toggle = toggleService.update(
                 name,
                 request.description(),
                 request.enabled(),
@@ -83,7 +83,7 @@ public class ToggleController {
                 request.allowListValues()
         );
         
-        ToggleResponse response = ToggleResponse.from(toggle);
+        final ToggleResponse response = ToggleResponse.from(toggle);
         return ResponseEntity.ok(response);
     }
 
@@ -106,8 +106,8 @@ public class ToggleController {
         logger.info("Adding value to allow list for toggle name: {}", name);
         
         toggleService.addAllowListEntry(name, value);
-        Toggle toggle = toggleService.findByName(name);
-        ToggleResponse response = ToggleResponse.from(toggle);
+        final Toggle toggle = toggleService.findByName(name);
+        final ToggleResponse response = ToggleResponse.from(toggle);
         
         return ResponseEntity.ok(response);
     }
@@ -120,8 +120,8 @@ public class ToggleController {
         logger.info("Removing value from allow list for toggle name: {}", name);
         
         toggleService.removeAllowListEntry(name, value);
-        Toggle toggle = toggleService.findByName(name);
-        ToggleResponse response = ToggleResponse.from(toggle);
+        final Toggle toggle = toggleService.findByName(name);
+        final ToggleResponse response = ToggleResponse.from(toggle);
         
         return ResponseEntity.ok(response);
     }
@@ -130,8 +130,8 @@ public class ToggleController {
     public ResponseEntity<Set<String>> getAllowList(@PathVariable String name) {
         logger.debug("Fetching allow list for toggle name: {}", name);
         
-        Toggle toggle = toggleService.findByName(name);
-        Set<String> allowList = toggle.getAllowList().stream()
+        final Toggle toggle = toggleService.findByName(name);
+        final Set<String> allowList = toggle.getAllowList().stream()
                 .map(entry -> entry.getValue())
                 .collect(Collectors.toSet());
         

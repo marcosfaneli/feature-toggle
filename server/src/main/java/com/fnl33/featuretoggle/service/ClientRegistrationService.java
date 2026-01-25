@@ -39,24 +39,24 @@ public class ClientRegistrationService {
 
     public ClientRegistration register(String callbackUrl, Set<String> toggles) {
         validateCallbackUrl(callbackUrl);
-        Set<String> togglesToPersist = toggles == null ? Set.of() : new HashSet<>(toggles);
+        final Set<String> togglesToPersist = toggles == null ? Set.of() : new HashSet<>(toggles);
         for (String toggleName : togglesToPersist) {
             if (!toggleRepository.existsByName(toggleName)) {
                 throw new ToggleNotFoundException(toggleName);
             }
         }
-        ClientRegistration registration = ClientRegistration.builder()
+        final ClientRegistration registration = ClientRegistration.builder()
                 .callbackUrl(callbackUrl)
                 .toggles(togglesToPersist)
                 .build();
-        ClientRegistration saved = clientRegistrationRepository.save(registration);
+        final ClientRegistration saved = clientRegistrationRepository.save(registration);
         metricsService.incrementClientRegistered();
         auditService.logAction("REGISTER", "Client", Map.of("clientId", saved.getId(), "toggleCount", toggles.size()));
         return saved;
     }
 
     public void unregister(UUID id) {
-        ClientRegistration existing = findById(id);
+        final ClientRegistration existing = findById(id);
         clientRegistrationRepository.delete(existing);
         metricsService.incrementClientUnregistered();
         auditService.logAction("UNREGISTER", "Client", Map.of("clientId", id));
@@ -68,7 +68,7 @@ public class ClientRegistrationService {
     }
 
     public ClientRegistration updateClientToggles(UUID id, Set<String> toggleNames) {
-        ClientRegistration client = findById(id);
+        final ClientRegistration client = findById(id);
         
         // Validate all toggles exist
         for (String toggleName : toggleNames) {
@@ -78,7 +78,7 @@ public class ClientRegistrationService {
         }
         
         client.setToggles(new HashSet<>(toggleNames));
-        ClientRegistration saved = clientRegistrationRepository.save(client);
+        final ClientRegistration saved = clientRegistrationRepository.save(client);
         auditService.logAction("UPDATE_TOGGLES", "Client", Map.of("clientId", id, "toggleCount", toggleNames.size()));
         return saved;
     }

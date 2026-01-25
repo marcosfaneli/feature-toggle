@@ -24,13 +24,13 @@ public class ApiKeyFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         // Allow actuator endpoints without API key for monitoring
-        String requestPath = request.getRequestURI();
+        final String requestPath = request.getRequestURI();
         if (requestPath.startsWith("/actuator")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        String header = request.getHeader(HEADER_NAME);
+        final String header = request.getHeader(HEADER_NAME);
         if (!apiKeyProperties.getApiKey().equals(header)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);

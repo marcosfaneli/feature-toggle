@@ -35,12 +35,12 @@ public class ClientController {
         
         logger.info("Registering client for callback: {}", request.callbackUrl());
         
-        ClientRegistration client = clientRegistrationService.register(
+        final ClientRegistration client = clientRegistrationService.register(
                 request.callbackUrl(),
                 request.toggleNames()
         );
         
-        ClientRegistrationResponse response = ClientRegistrationResponse.from(client);
+        final ClientRegistrationResponse response = ClientRegistrationResponse.from(client);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -48,8 +48,8 @@ public class ClientController {
     public ResponseEntity<ClientRegistrationResponse> getClient(@PathVariable UUID id) {
         logger.debug("Fetching client by id: {}", id);
         
-        ClientRegistration client = clientRegistrationService.findById(id);
-        ClientRegistrationResponse response = ClientRegistrationResponse.from(client);
+        final ClientRegistration client = clientRegistrationService.findById(id);
+        final ClientRegistrationResponse response = ClientRegistrationResponse.from(client);
         
         return ResponseEntity.ok(response);
     }
@@ -58,7 +58,7 @@ public class ClientController {
     public ResponseEntity<List<ClientRegistrationResponse>> getAllClients() {
         logger.debug("Fetching all clients");
         
-        List<ClientRegistrationResponse> clients = clientRegistrationService.findAll()
+        final List<ClientRegistrationResponse> clients = clientRegistrationService.findAll()
                 .stream()
                 .map(ClientRegistrationResponse::from)
                 .collect(Collectors.toList());
@@ -82,12 +82,12 @@ public class ClientController {
         
         logger.info("Updating toggles for client id: {}", id);
         
-        ClientRegistration client = clientRegistrationService.updateClientToggles(
+        final ClientRegistration client = clientRegistrationService.updateClientToggles(
                 id,
                 request.toggleNames()
         );
         
-        ClientRegistrationResponse response = ClientRegistrationResponse.from(client);
+        final ClientRegistrationResponse response = ClientRegistrationResponse.from(client);
         return ResponseEntity.ok(response);
     }
 
@@ -97,7 +97,7 @@ public class ClientController {
         
         logger.debug("Fetching clients for toggle: {}", toggleName);
         
-        List<ClientRegistrationResponse> clients = clientRegistrationService
+        final List<ClientRegistrationResponse> clients = clientRegistrationService
                 .findByToggleName(toggleName)
                 .stream()
                 .map(ClientRegistrationResponse::from)

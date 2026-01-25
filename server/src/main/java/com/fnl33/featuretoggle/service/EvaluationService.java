@@ -17,7 +17,7 @@ public class EvaluationService {
     public EvaluationResult evaluate(String toggleName, String value) {
         metricsService.incrementToggleEvaluation();
         
-        Toggle toggle = toggleRepository.findByName(toggleName).orElse(null);
+        final Toggle toggle = toggleRepository.findByName(toggleName).orElse(null);
         if (toggle == null) {
             metricsService.incrementToggleEvaluationCacheMiss();
             return new EvaluationResult(false, "Toggle not found");
@@ -28,7 +28,7 @@ public class EvaluationService {
         if (value == null || value.isBlank()) {
             return new EvaluationResult(false, "Value is required for evaluation");
         }
-        boolean allowed = toggle.getAllowList().stream()
+        final boolean allowed = toggle.getAllowList().stream()
                 .anyMatch(entry -> entry.getValue().equals(value));
         if (allowed) {
             metricsService.incrementToggleEvaluationCacheHit();

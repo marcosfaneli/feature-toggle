@@ -47,15 +47,15 @@ public class ToggleService {
         if (toggleRepository.existsByName(name)) {
             throw new ValidationException("Toggle with name %s already exists".formatted(name));
         }
-        Attribute attribute = resolveAttribute(attributeName);
-        Toggle toggle = Toggle.builder()
+        final Attribute attribute = resolveAttribute(attributeName);
+        final Toggle toggle = Toggle.builder()
                 .name(name)
                 .description(description)
                 .enabled(enabled)
                 .attribute(attribute)
                 .build();
         syncAllowList(toggle, allowListValues);
-        Toggle saved = toggleRepository.save(toggle);
+        final Toggle saved = toggleRepository.save(toggle);
         metricsService.incrementToggleCreated();
         auditService.logAction("CREATE", "Toggle", Map.of("name", name, "enabled", enabled, "attribute", attributeName));
         notificationOrchestrator.notifyToggleChange(saved, null);
@@ -63,13 +63,13 @@ public class ToggleService {
     }
 
     public Toggle update(String name, String description, boolean enabled, String attributeName, List<String> allowListValues) {
-        Toggle existing = findByName(name);
-        Attribute attribute = resolveAttribute(attributeName);
+        final Toggle existing = findByName(name);
+        final Attribute attribute = resolveAttribute(attributeName);
         existing.setDescription(description);
         existing.setEnabled(enabled);
         existing.setAttribute(attribute);
         syncAllowList(existing, allowListValues);
-        Toggle saved = toggleRepository.save(existing);
+        final Toggle saved = toggleRepository.save(existing);
         metricsService.incrementToggleUpdated();
         auditService.logAction("UPDATE", "Toggle", Map.of("name", name, "enabled", enabled, "attribute", attributeName));
         notificationOrchestrator.notifyToggleChange(saved, null);
@@ -77,7 +77,7 @@ public class ToggleService {
     }
 
     public void delete(String name) {
-        Toggle existing = findByName(name);
+        final Toggle existing = findByName(name);
         toggleRepository.delete(existing);
         metricsService.incrementToggleDeleted();
         auditService.logAction("DELETE", "Toggle", Map.of("name", name));
@@ -85,25 +85,25 @@ public class ToggleService {
     }
 
     public AllowListEntry addAllowListEntry(String toggleName, String value) {
-        Toggle toggle = findByName(toggleName);
+        final Toggle toggle = findByName(toggleName);
         validateAllowListValue(value);
         if (allowListEntryRepository.existsByToggle_NameAndValue(toggleName, value)) {
             throw new ValidationException("Value already present in allow list for toggle %s".formatted(toggleName));
         }
-        AllowListEntry entry = AllowListEntry.builder()
+        final AllowListEntry entry = AllowListEntry.builder()
                 .toggle(toggle)
                 .value(value)
                 .build();
         toggle.getAllowList().add(entry);
-        Toggle saved = toggleRepository.save(toggle);
+        final Toggle saved = toggleRepository.save(toggle);
         auditService.logAction("ADD_ALLOW_LIST", "Toggle", Map.of("toggleName", toggleName, "value", value));
         notificationOrchestrator.notifyToggleChange(saved, value);
         return entry;
     }
 
     public void removeAllowListEntry(String toggleName, String value) {
-        Toggle toggle = findByName(toggleName);
-        AllowListEntry entry = allowListEntryRepository.findByToggle_NameAndValue(toggleName, value)
+        final Toggle toggle = findByName(toggleName);
+        final AllowListEntry entry = allowListEntryRepository.findByToggle_NameAndValue(toggleName, value)
                 .orElseThrow(() -> new AllowListEntryNotFoundException(toggleName, value));
         toggle.getAllowList().remove(entry);
         allowListEntryRepository.delete(entry);

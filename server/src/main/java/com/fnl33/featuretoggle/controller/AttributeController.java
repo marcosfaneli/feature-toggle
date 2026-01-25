@@ -32,14 +32,14 @@ public class AttributeController {
     public ResponseEntity<AttributeResponse> createAttribute(@Valid @RequestBody AttributeRequest request) {
         logger.info("Creating attribute: {}", request.name());
         
-        Attribute attribute = Attribute.builder()
+        final Attribute attribute = Attribute.builder()
                 .name(request.name())
                 .description(request.description())
                 .dataType(request.dataType())
                 .build();
         
-        Attribute created = attributeService.create(attribute);
-        AttributeResponse response = AttributeResponse.from(created);
+        final Attribute created = attributeService.create(attribute);
+        final AttributeResponse response = AttributeResponse.from(created);
         
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -48,7 +48,7 @@ public class AttributeController {
     public ResponseEntity<List<AttributeResponse>> getAllAttributes() {
         logger.debug("Fetching all attributes");
         
-        List<AttributeResponse> attributes = attributeService.findAll()
+        final List<AttributeResponse> attributes = attributeService.findAll()
                 .stream()
                 .map(AttributeResponse::from)
                 .collect(Collectors.toList());
@@ -60,8 +60,8 @@ public class AttributeController {
     public ResponseEntity<AttributeResponse> getAttributeByName(@PathVariable String name) {
         logger.debug("Fetching attribute by name: {}", name);
         
-        Attribute attribute = attributeService.findByName(name);
-        AttributeResponse response = AttributeResponse.from(attribute);
+        final Attribute attribute = attributeService.findByName(name);
+        final AttributeResponse response = AttributeResponse.from(attribute);
         
         return ResponseEntity.ok(response);
     }
@@ -73,8 +73,8 @@ public class AttributeController {
         
         logger.info("Updating attribute name: {}", name);
         
-        Attribute attribute = attributeService.update(name, request.description(), request.dataType());
-        AttributeResponse response = AttributeResponse.from(attribute);
+        final Attribute attribute = attributeService.update(name, request.description(), request.dataType());
+        final AttributeResponse response = AttributeResponse.from(attribute);
         
         return ResponseEntity.ok(response);
     }

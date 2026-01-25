@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
         
         logger.warn("Resource not found: {}", ex.getMessage());
         
-        ProblemDetail problem = ProblemDetail.builder()
+        final ProblemDetail problem = ProblemDetail.builder()
                 .type("about:blank")
                 .title("Resource Not Found")
                 .status(HttpStatus.NOT_FOUND.value())
@@ -48,7 +48,7 @@ public class GlobalExceptionHandler {
         
         logger.warn("Validation error: {}", ex.getMessage());
         
-        ProblemDetail problem = ProblemDetail.builder()
+        final ProblemDetail problem = ProblemDetail.builder()
                 .type("about:blank")
                 .title("Validation Error")
                 .status(HttpStatus.BAD_REQUEST.value())
@@ -66,14 +66,14 @@ public class GlobalExceptionHandler {
         
         logger.warn("Validation error in request body");
         
-        Map<String, Object> errors = new HashMap<>();
+        final Map<String, Object> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach(error -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
 
-        ProblemDetail problem = ProblemDetail.builder()
+        final ProblemDetail problem = ProblemDetail.builder()
                 .type("about:blank")
                 .title("Validation Error")
                 .status(HttpStatus.BAD_REQUEST.value())
@@ -92,7 +92,7 @@ public class GlobalExceptionHandler {
         
         logger.warn("Attribute in use: {}", ex.getMessage());
         
-        ProblemDetail problem = ProblemDetail.builder()
+        final ProblemDetail problem = ProblemDetail.builder()
                 .type("about:blank")
                 .title("Attribute In Use")
                 .status(HttpStatus.CONFLICT.value())
@@ -110,7 +110,7 @@ public class GlobalExceptionHandler {
         
         logger.error("Unexpected error", ex);
         
-        ProblemDetail problem = ProblemDetail.builder()
+        final ProblemDetail problem = ProblemDetail.builder()
                 .type("about:blank")
                 .title("Internal Server Error")
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())

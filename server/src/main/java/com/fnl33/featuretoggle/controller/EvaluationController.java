@@ -29,9 +29,9 @@ public class EvaluationController {
         
         logger.debug("Evaluating toggle: {} with value: {}", name, value);
         
-        EvaluationResult result = evaluationService.evaluate(name, value);
+        final EvaluationResult result = evaluationService.evaluate(name, value);
         
-        EvaluationResponse response = new EvaluationResponse(
+        final EvaluationResponse response = new EvaluationResponse(
                 name,
                 result.enabled(),
                 value,

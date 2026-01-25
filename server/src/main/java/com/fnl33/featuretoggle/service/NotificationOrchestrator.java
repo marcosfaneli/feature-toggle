@@ -22,15 +22,15 @@ public class NotificationOrchestrator {
     private final ApplicationEventPublisher eventPublisher;
 
     public void notifyToggleChange(Toggle toggle, String value) {
-        List<String> callbackUrls = clientRegistrationRepository.findByTogglesContains(toggle.getName()).stream()
+        final List<String> callbackUrls = clientRegistrationRepository.findByTogglesContains(toggle.getName()).stream()
                 .map(ClientRegistration::getCallbackUrl)
                 .toList();
-        ToggleNotificationEvent event = new ToggleNotificationEvent(toggle.getName(), toggle.isEnabled(), value, callbackUrls);
+        final ToggleNotificationEvent event = new ToggleNotificationEvent(toggle.getName(), toggle.isEnabled(), value, callbackUrls);
         publishAfterCommit(event);
     }
 
     public void notifyAttributeChange(Attribute attribute, List<String> affectedToggleNames) {
-        AttributeChangedEvent event = new AttributeChangedEvent(attribute.getName(), List.copyOf(affectedToggleNames));
+        final AttributeChangedEvent event = new AttributeChangedEvent(attribute.getName(), List.copyOf(affectedToggleNames));
         publishAfterCommit(event);
     }
 

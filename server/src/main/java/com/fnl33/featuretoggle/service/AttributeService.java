@@ -41,20 +41,20 @@ public class AttributeService {
         if (attributeRepository.existsByName(attribute.getName())) {
             throw new ValidationException("Attribute with name %s already exists".formatted(attribute.getName()));
         }
-        Attribute saved = attributeRepository.save(attribute);
+        final Attribute saved = attributeRepository.save(attribute);
         metricsService.incrementAttributeCreated();
         auditService.logAction("CREATE", "Attribute", Map.of("name", attribute.getName(), "dataType", attribute.getDataType()));
         return saved;
     }
 
     public Attribute update(String name, String description, DataType dataType) {
-        Attribute existing = findByName(name);
+        final Attribute existing = findByName(name);
         if (dataType == null) {
             throw new ValidationException("Attribute data type is required");
         }
         existing.setDescription(description);
         existing.setDataType(dataType);
-        Attribute saved = attributeRepository.save(existing);
+        final Attribute saved = attributeRepository.save(existing);
         metricsService.incrementAttributeUpdated();
         auditService.logAction("UPDATE", "Attribute", Map.of("name", name, "dataType", dataType));
         notificationOrchestrator.notifyAttributeChange(saved,
@@ -63,7 +63,7 @@ public class AttributeService {
     }
 
     public void delete(String name) {
-        Attribute existing = findByName(name);
+        final Attribute existing = findByName(name);
         if (toggleRepository.existsByAttribute_Name(name)) {
             throw new AttributeInUseException(name);
         }
