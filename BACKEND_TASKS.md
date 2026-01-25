@@ -46,6 +46,6 @@ Lista de tarefas para implementar o servidor de feature toggles no ecossistema S
 - [ ] Cobertura mínima e execução em CI (GitHub Actions opcional).
 
 ## Fase 8 — Docs e Execução
-- [ ] Atualizar README com steps para rodar (profiles, DB, exemplos de curl).
-- [ ] Documentar contratos principais (payloads, exemplos de resposta/erro).
+- [x] Atualizar README com steps para rodar (profiles, DB, exemplos de curl).
+- [x] Documentar contratos principais (payloads, exemplos de resposta/erro).
 - [ ] Opcional: docker-compose com Postgres para desenvolvimento.
