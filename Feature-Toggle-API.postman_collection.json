@@ -1,0 +1,661 @@
+{
+  "info": {
+    "_postman_id": "feature-toggle-api",
+    "name": "Feature Toggle API",
+    "description": "Coleção completa de endpoints da API Feature Toggle",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Attributes",
+      "item": [
+        {
+          "name": "Create Attribute",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "your-api-key-here"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"environment\",\n  \"description\": \"Current environment type\",\n  \"dataType\": \"STRING\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/attributes",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "attributes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Attributes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "your-api-key-here"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/attributes",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "attributes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Attribute by Name",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "your-api-key-here"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/attributes/environment",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "attributes",
+                "environment"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Attribute",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "your-api-key-here"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Updated environment type\",\n  \"dataType\": \"STRING\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/attributes/environment",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "attributes",
+                "environment"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Attribute",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "your-api-key-here"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/attributes/environment",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "attributes",
+                "environment"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Toggles",
+      "item": [
+        {
+          "name": "Create Toggle",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "your-api-key-here"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"new_feature_flag\",\n  \"description\": \"Feature flag for new feature\",\n  \"enabled\": true,\n  \"attributeName\": \"environment\",\n  \"allowListValues\": [\"production\", \"staging\"]\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/toggles",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "toggles"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Toggles",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "your-api-key-here"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/toggles",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "toggles"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Toggle by Name",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "your-api-key-here"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/toggles/new_feature_flag",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "toggles",
+                "new_feature_flag"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Toggle",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "your-api-key-here"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Updated feature flag\",\n  \"enabled\": false,\n  \"attributeName\": \"environment\",\n  \"allowListValues\": [\"staging\"]\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/toggles/new_feature_flag",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "toggles",
+                "new_feature_flag"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Toggle",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "your-api-key-here"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/toggles/new_feature_flag",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "toggles",
+                "new_feature_flag"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Allow List",
+      "item": [
+        {
+          "name": "Get Allow List",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "your-api-key-here"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/toggles/new_feature_flag/allow-list",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "toggles",
+                "new_feature_flag",
+                "allow-list"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add to Allow List",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "your-api-key-here"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/toggles/new_feature_flag/allow-list?value=development",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "toggles",
+                "new_feature_flag",
+                "allow-list"
+              ],
+              "query": [
+                {
+                  "key": "value",
+                  "value": "development"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Remove from Allow List",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "your-api-key-here"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/toggles/new_feature_flag/allow-list?value=development",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "toggles",
+                "new_feature_flag",
+                "allow-list"
+              ],
+              "query": [
+                {
+                  "key": "value",
+                  "value": "development"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Evaluation",
+      "item": [
+        {
+          "name": "Evaluate Toggle (with value)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "your-api-key-here"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/toggles/new_feature_flag/evaluate?value=production",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "toggles",
+                "new_feature_flag",
+                "evaluate"
+              ],
+              "query": [
+                {
+                  "key": "value",
+                  "value": "production"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Evaluate Toggle (without value)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "your-api-key-here"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/toggles/new_feature_flag/evaluate",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "toggles",
+                "new_feature_flag",
+                "evaluate"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Clients",
+      "item": [
+        {
+          "name": "Register Client",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "your-api-key-here"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"callbackUrl\": \"https://webhook.example.com/notify\",\n  \"toggleNames\": [\"new_feature_flag\", \"another_feature\"]\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/clients/register",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "clients",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Clients",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "your-api-key-here"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/clients",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "clients"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Client by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "your-api-key-here"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/clients/550e8400-e29b-41d4-a716-446655440000",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "clients",
+                "550e8400-e29b-41d4-a716-446655440000"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Client Toggles",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-API-Key",
+                "value": "your-api-key-here"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"toggleNames\": [\"new_feature_flag\"]\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/clients/550e8400-e29b-41d4-a716-446655440000/toggles",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "clients",
+                "550e8400-e29b-41d4-a716-446655440000",
+                "toggles"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Clients by Toggle Name",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "your-api-key-here"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/clients/toggle/new_feature_flag",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "clients",
+                "toggle",
+                "new_feature_flag"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Unregister Client",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "your-api-key-here"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/clients/550e8400-e29b-41d4-a716-446655440000",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "clients",
+                "550e8400-e29b-41d4-a716-446655440000"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "api_key",
+      "value": "your-api-key-here",
+      "type": "string"
+    }
+  ]
+}
