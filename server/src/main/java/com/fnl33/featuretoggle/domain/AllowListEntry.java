@@ -24,7 +24,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Entity
 @Table(name = "allow_list_entries", uniqueConstraints = {
-        @UniqueConstraint(name = "uk_allow_list_entry_toggle_value", columnNames = {"toggle_id", "value"})
+        @UniqueConstraint(name = "uk_allow_list_entry_toggle_value", columnNames = {"toggle_name", "toggle_value"})
 })
 public class AllowListEntry {
 
@@ -36,6 +36,6 @@ public class AllowListEntry {
     @JoinColumn(name = "toggle_name", nullable = false)
     private Toggle toggle;
 
-    @Column(nullable = false)
+    @Column(name = "toggle_value", nullable = false)
     private String value;
 }

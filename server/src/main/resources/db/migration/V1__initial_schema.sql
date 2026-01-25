@@ -20,9 +20,9 @@ CREATE INDEX idx_toggles_attribute_name ON toggles (attribute_name);
 CREATE TABLE allow_list_entries (
     id UUID PRIMARY KEY,
     toggle_name VARCHAR(255) NOT NULL,
-    value VARCHAR(255) NOT NULL,
+    toggle_value VARCHAR(255) NOT NULL,
     CONSTRAINT fk_allow_list_toggle FOREIGN KEY (toggle_name) REFERENCES toggles (name) ON DELETE CASCADE,
-    CONSTRAINT uk_allow_list_entry_toggle_value UNIQUE (toggle_name, value)
+    CONSTRAINT uk_allow_list_entry_toggle_value UNIQUE (toggle_name, toggle_value)
 );
 CREATE INDEX idx_allow_list_toggle_name ON allow_list_entries (toggle_name);
 
