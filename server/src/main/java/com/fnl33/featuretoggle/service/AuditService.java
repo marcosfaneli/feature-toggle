@@ -21,11 +21,11 @@ public class AuditService {
     }
 
     /**
-     * Registra uma ação de auditoria com payload em formato resumido.
+     * Logs an audit action with payload in summary format.
      *
-     * @param action  Tipo de ação (CREATE, UPDATE, DELETE, etc.)
-     * @param resource Tipo de recurso afetado (Toggle, Attribute, AllowListEntry, etc.)
-     * @param payload Objeto com dados relevantes da ação
+     * @param action  Action type (CREATE, UPDATE, DELETE, etc.)
+     * @param resource Resource type affected (Toggle, Attribute, AllowListEntry, etc.)
+     * @param payload Object with relevant action data
      */
     public void logAction(String action, String resource, Object payload) {
         try {
@@ -42,12 +42,12 @@ public class AuditService {
             log.info("Audit: action={} resource={} timestamp={}", 
                     action, resource, auditLog.getCreatedAt());
         } catch (Exception e) {
-            log.error("Erro ao registrar auditoria - action: {}, resource: {}", action, resource, e);
+            log.error("Error logging audit action - action: {}, resource: {}", action, resource, e);
         }
     }
 
     /**
-     * Registra uma ação sem payload adicional
+     * Logs an action without additional payload
      */
     public void logAction(String action, String resource) {
         logAction(action, resource, null);
