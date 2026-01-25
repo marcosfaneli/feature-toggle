@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -22,6 +23,8 @@ public class ClientRegistrationService {
 
     private final ClientRegistrationRepository clientRegistrationRepository;
     private final ToggleRepository toggleRepository;
+    private final AuditService auditService;
+    private final MetricsService metricsService;
 
     @Transactional(readOnly = true)
     public List<ClientRegistration> findAll() {
@@ -46,12 +49,17 @@ public class ClientRegistrationService {
                 .callbackUrl(callbackUrl)
                 .toggles(togglesToPersist)
                 .build();
-        return clientRegistrationRepository.save(registration);
+        ClientRegistration saved = clientRegistrationRepository.save(registration);
+        metricsService.incrementClientRegistered();
+        auditService.logAction("REGISTER", "Client", Map.of("clientId", saved.getId(), "toggleCount", toggles.size()));
+        return saved;
     }
 
     public void unregister(UUID id) {
         ClientRegistration existing = findById(id);
         clientRegistrationRepository.delete(existing);
+        metricsService.incrementClientUnregistered();
+        auditService.logAction("UNREGISTER", "Client", Map.of("clientId", id));
     }
 
     @Transactional(readOnly = true)
@@ -70,7 +78,9 @@ public class ClientRegistrationService {
         }
         
         client.setToggles(new HashSet<>(toggleNames));
-        return clientRegistrationRepository.save(client);
+        ClientRegistration saved = clientRegistrationRepository.save(client);
+        auditService.logAction("UPDATE_TOGGLES", "Client", Map.of("clientId", id, "toggleCount", toggleNames.size()));
+        return saved;
     }
 
     private void validateCallbackUrl(String callbackUrl) {

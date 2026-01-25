@@ -34,9 +34,9 @@ Lista de tarefas para implementar o servidor de feature toggles no ecossistema S
 - [ ] Modelar payload de notificação (`toggle`, `enabled`, `value`).
 
 ## Fase 6 — Auditoria e Observabilidade
-- [ ] Registrar mudanças em `AuditLog` (ação, recurso, payload resumido, timestamp).
-- [ ] Métricas (Micrometer): requests, latência, cache-miss.
-- [ ] Logs estruturados e correlação de requisições.
+- [x] Registrar mudanças em `AuditLog` (ação, recurso, payload resumido, timestamp).
+- [x] Métricas (Micrometer): requests, latência, cache-miss.
+- [x] Logs estruturados e correlação de requisições.
 
 ## Fase 7 — Testes e Qualidade
 - [ ] Testes unitários do serviço de avaliação (cenários enabled/disabled/allow list).

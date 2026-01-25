@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Service
@@ -27,6 +28,8 @@ public class ToggleService {
     private final AttributeRepository attributeRepository;
     private final AllowListEntryRepository allowListEntryRepository;
     private final NotificationOrchestrator notificationOrchestrator;
+    private final AuditService auditService;
+    private final MetricsService metricsService;
 
     @Transactional(readOnly = true)
     public List<Toggle> findAll() {
@@ -53,6 +56,8 @@ public class ToggleService {
                 .build();
         syncAllowList(toggle, allowListValues);
         Toggle saved = toggleRepository.save(toggle);
+        metricsService.incrementToggleCreated();
+        auditService.logAction("CREATE", "Toggle", Map.of("name", name, "enabled", enabled, "attribute", attributeName));
         notificationOrchestrator.notifyToggleChange(saved, null);
         return saved;
     }
@@ -65,6 +70,8 @@ public class ToggleService {
         existing.setAttribute(attribute);
         syncAllowList(existing, allowListValues);
         Toggle saved = toggleRepository.save(existing);
+        metricsService.incrementToggleUpdated();
+        auditService.logAction("UPDATE", "Toggle", Map.of("name", name, "enabled", enabled, "attribute", attributeName));
         notificationOrchestrator.notifyToggleChange(saved, null);
         return saved;
     }
@@ -72,6 +79,8 @@ public class ToggleService {
     public void delete(String name) {
         Toggle existing = findByName(name);
         toggleRepository.delete(existing);
+        metricsService.incrementToggleDeleted();
+        auditService.logAction("DELETE", "Toggle", Map.of("name", name));
         notificationOrchestrator.notifyToggleChange(existing, null);
     }
 
@@ -87,6 +96,7 @@ public class ToggleService {
                 .build();
         toggle.getAllowList().add(entry);
         Toggle saved = toggleRepository.save(toggle);
+        auditService.logAction("ADD_ALLOW_LIST", "Toggle", Map.of("toggleName", toggleName, "value", value));
         notificationOrchestrator.notifyToggleChange(saved, value);
         return entry;
     }
@@ -97,6 +107,7 @@ public class ToggleService {
                 .orElseThrow(() -> new AllowListEntryNotFoundException(toggleName, value));
         toggle.getAllowList().remove(entry);
         allowListEntryRepository.delete(entry);
+        auditService.logAction("REMOVE_ALLOW_LIST", "Toggle", Map.of("toggleName", toggleName, "value", value));
         notificationOrchestrator.notifyToggleChange(toggle, value);
     }
 

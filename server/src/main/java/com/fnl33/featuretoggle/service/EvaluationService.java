@@ -11,11 +11,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class EvaluationService {
 
     private final ToggleRepository toggleRepository;
+    private final MetricsService metricsService;
 
     @Transactional(readOnly = true)
     public EvaluationResult evaluate(String toggleName, String value) {
+        metricsService.incrementToggleEvaluation();
+        
         Toggle toggle = toggleRepository.findByName(toggleName).orElse(null);
         if (toggle == null) {
+            metricsService.incrementToggleEvaluationCacheMiss();
             return new EvaluationResult(false, "Toggle not found");
         }
         if (!toggle.isEnabled()) {
@@ -27,8 +31,10 @@ public class EvaluationService {
         boolean allowed = toggle.getAllowList().stream()
                 .anyMatch(entry -> entry.getValue().equals(value));
         if (allowed) {
+            metricsService.incrementToggleEvaluationCacheHit();
             return new EvaluationResult(true, "Value is in allow list");
         }
         return new EvaluationResult(false, "Value not permitted");
     }
 }
+

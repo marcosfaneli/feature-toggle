@@ -11,3 +11,4 @@ server/target/
 
 # OS artifacts
 .DS_Store
+server/logs/

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +22,8 @@ public class AttributeService {
     private final AttributeRepository attributeRepository;
     private final ToggleRepository toggleRepository;
     private final NotificationOrchestrator notificationOrchestrator;
+    private final AuditService auditService;
+    private final MetricsService metricsService;
 
     @Transactional(readOnly = true)
     public List<Attribute> findAll() {
@@ -38,7 +41,10 @@ public class AttributeService {
         if (attributeRepository.existsByName(attribute.getName())) {
             throw new ValidationException("Attribute with name %s already exists".formatted(attribute.getName()));
         }
-        return attributeRepository.save(attribute);
+        Attribute saved = attributeRepository.save(attribute);
+        metricsService.incrementAttributeCreated();
+        auditService.logAction("CREATE", "Attribute", Map.of("name", attribute.getName(), "dataType", attribute.getDataType()));
+        return saved;
     }
 
     public Attribute update(String name, String description, DataType dataType) {
@@ -49,6 +55,8 @@ public class AttributeService {
         existing.setDescription(description);
         existing.setDataType(dataType);
         Attribute saved = attributeRepository.save(existing);
+        metricsService.incrementAttributeUpdated();
+        auditService.logAction("UPDATE", "Attribute", Map.of("name", name, "dataType", dataType));
         notificationOrchestrator.notifyAttributeChange(saved,
                 toggleRepository.findByAttribute_Name(name).stream().map(toggle -> toggle.getName()).toList());
         return saved;
@@ -60,6 +68,8 @@ public class AttributeService {
             throw new AttributeInUseException(name);
         }
         attributeRepository.delete(existing);
+        metricsService.incrementAttributeDeleted();
+        auditService.logAction("DELETE", "Attribute", Map.of("name", name));
         notificationOrchestrator.notifyAttributeChange(existing, List.of());
     }
 
