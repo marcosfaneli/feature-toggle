@@ -8,6 +8,7 @@ import com.fnl33.featuretoggle.service.ClientRegistrationService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -60,7 +61,7 @@ public class ClientController {
     public ResponseEntity<PagedResponse<ClientRegistrationResponse>> getAllClients(Pageable pageable) {
         logger.debug("Fetching all clients");
         
-        final var pagedClient = clientRegistrationService.findAll(pageable);
+        final Page<ClientRegistration> pagedClient = clientRegistrationService.findAll(pageable);
         final PagedResponse<ClientRegistrationResponse> clients = PagedResponse.from(
             pagedClient.map(ClientRegistrationResponse::from)
         );

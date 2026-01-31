@@ -8,6 +8,7 @@ import com.fnl33.featuretoggle.service.ToggleService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +33,7 @@ public class ToggleController {
     public ResponseEntity<ToggleDetailResponse> createToggle(@Valid @RequestBody ToggleRequest request) {
         logger.info("Creating toggle: {}", request.name());
         
-        final var toggle = toggleService.create(
+        final Toggle toggle = toggleService.create(
                 request.name(),
                 request.description(),
                 request.enabled(),
@@ -48,7 +49,7 @@ public class ToggleController {
     public ResponseEntity<PagedResponse<ToggleListResponse>> getAllToggles(Pageable pageable) {
         logger.debug("Fetching all toggles");
         
-        final var pagedToggle = toggleService.findAll(pageable);
+        final Page<Toggle> pagedToggle = toggleService.findAll(pageable);
         final PagedResponse<ToggleListResponse> toggles = PagedResponse.from(
             pagedToggle.map(ToggleListResponse::from)
         );
@@ -60,7 +61,7 @@ public class ToggleController {
     public ResponseEntity<ToggleDetailResponse> getToggleByName(@PathVariable String name) {
         logger.debug("Fetching toggle by name: {}", name);
         
-        final var toggle = toggleService.findByName(name);
+        final Toggle toggle = toggleService.findByName(name);
         final ToggleDetailResponse response = ToggleDetailResponse.from(toggle);
         
         return ResponseEntity.ok(response);
@@ -73,7 +74,7 @@ public class ToggleController {
         
         logger.info("Updating toggle name: {}", name);
         
-        final var toggle = toggleService.update(
+        final Toggle toggle = toggleService.update(
                 name,
                 request.description(),
                 request.enabled(),

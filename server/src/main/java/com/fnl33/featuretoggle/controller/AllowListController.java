@@ -6,6 +6,7 @@ import com.fnl33.featuretoggle.domain.Toggle;
 import com.fnl33.featuretoggle.service.ToggleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -59,7 +60,7 @@ public class AllowListController {
     public ResponseEntity<PagedResponse<String>> getAllowList(@PathVariable String name, Pageable pageable) {
         logger.debug("Fetching allow list for toggle name: {}", name);
 
-        final var pagedAllowList = toggleService.findAllowListValues(name, pageable);
+        final Page<String> pagedAllowList = toggleService.findAllowListValues(name, pageable);
         final PagedResponse<String> allowList = PagedResponse.from(pagedAllowList);
 
         return ResponseEntity.ok(allowList);

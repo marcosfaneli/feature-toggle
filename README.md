@@ -21,6 +21,7 @@ A Spring Boot-based feature toggle management system with attribute-based evalua
 - [Database](#database)
 - [Monitoring](#monitoring)
 - [Error Handling](#error-handling)
+- [Contributing](#contributing)
 
 ## Overview
 
@@ -795,6 +796,18 @@ mvn clean package -DskipTests
 # Run tests only
 mvn test
 ```
+
+## Contributing
+
+We welcome contributions! Please read our [Contributing Guidelines](CONTRIBUTING.md) before submitting pull requests.
+
+Key points for contributors:
+- Follow the established coding standards (no `var` keyword, use explicit types)
+- Write meaningful commit messages
+- Add tests for new features
+- Update documentation as needed
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines on code style, testing, and development workflow.
 
 ## License
 

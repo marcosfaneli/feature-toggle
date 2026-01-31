@@ -8,6 +8,7 @@ import com.fnl33.featuretoggle.service.AttributeService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,7 +49,7 @@ public class AttributeController {
     public ResponseEntity<PagedResponse<AttributeResponse>> getAllAttributes(Pageable pageable) {
         logger.debug("Fetching all attributes");
         
-        final var pagedAttribute = attributeService.findAll(pageable);
+        final Page<Attribute> pagedAttribute = attributeService.findAll(pageable);
         final PagedResponse<AttributeResponse> attributes = PagedResponse.from(
             pagedAttribute.map(AttributeResponse::from)
         );
