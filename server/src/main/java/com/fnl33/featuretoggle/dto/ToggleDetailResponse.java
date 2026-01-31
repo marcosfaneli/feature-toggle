@@ -4,7 +4,7 @@ import com.fnl33.featuretoggle.domain.Toggle;
 
 import java.time.Instant;
 
-public record ToggleResponse(
+public record ToggleDetailResponse(
     String name,
     String description,
     AttributeResponse attribute,
@@ -12,8 +12,8 @@ public record ToggleResponse(
     Instant createdAt,
     Instant updatedAt
 ) {
-    public static ToggleResponse from(Toggle toggle) {
-        return new ToggleResponse(
+    public static ToggleDetailResponse from(Toggle toggle) {
+        return new ToggleDetailResponse(
             toggle.getName(),
             toggle.getDescription(),
             AttributeResponse.from(toggle.getAttribute()),

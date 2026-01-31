@@ -11,6 +11,8 @@ import com.fnl33.featuretoggle.service.exception.AttributeNotFoundException;
 import com.fnl33.featuretoggle.service.exception.ToggleNotFoundException;
 import com.fnl33.featuretoggle.service.exception.ValidationException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,14 +34,21 @@ public class ToggleService {
     private final MetricsService metricsService;
 
     @Transactional(readOnly = true)
-    public List<Toggle> findAll() {
-        return toggleRepository.findAll();
+    public Page<Toggle> findAll(Pageable pageable) {
+        return toggleRepository.findAll(pageable);
     }
 
     @Transactional(readOnly = true)
     public Toggle findByName(String name) {
-        return toggleRepository.findById(name)
+        return toggleRepository.findByName(name)
                 .orElseThrow(() -> new ToggleNotFoundException(name));
+    }
+
+    @Transactional(readOnly = true)
+    public Page<String> findAllowListValues(String toggleName, Pageable pageable) {
+        findByName(toggleName);
+        return allowListEntryRepository.findByToggle_Name(toggleName, pageable)
+                .map(AllowListEntry::getValue);
     }
 
     public Toggle create(String name, String description, boolean enabled, String attributeName, List<String> allowListValues) {

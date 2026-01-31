@@ -7,6 +7,8 @@ import com.fnl33.featuretoggle.service.exception.ClientRegistrationNotFoundExcep
 import com.fnl33.featuretoggle.service.exception.ToggleNotFoundException;
 import com.fnl33.featuretoggle.service.exception.ValidationException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,8 +29,8 @@ public class ClientRegistrationService {
     private final MetricsService metricsService;
 
     @Transactional(readOnly = true)
-    public List<ClientRegistration> findAll() {
-        return clientRegistrationRepository.findAll();
+    public Page<ClientRegistration> findAll(Pageable pageable) {
+        return clientRegistrationRepository.findAll(pageable);
     }
 
     @Transactional(readOnly = true)

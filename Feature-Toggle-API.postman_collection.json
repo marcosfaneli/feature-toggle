@@ -28,7 +28,7 @@
               "raw": "{\n  \"name\": \"environment\",\n  \"description\": \"Current environment type\",\n  \"dataType\": \"STRING\"\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/attributes",
+              "raw": "http://localhost:8080/api/attributes?page=0&size=20&sort=name,asc",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -37,6 +37,20 @@
               "path": [
                 "api",
                 "attributes"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                },
+                {
+                  "key": "sort",
+                  "value": "name,asc"
+                }
               ]
             }
           },
@@ -53,7 +67,7 @@
               }
             ],
             "url": {
-              "raw": "http://localhost:8080/api/attributes",
+              "raw": "http://localhost:8080/api/attributes?page=0&size=20&sort=name,asc",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -62,6 +76,20 @@
               "path": [
                 "api",
                 "attributes"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                },
+                {
+                  "key": "sort",
+                  "value": "name,asc"
+                }
               ]
             }
           },
@@ -177,7 +205,7 @@
               "raw": "{\n  \"name\": \"new_feature_flag\",\n  \"description\": \"Feature flag for new feature\",\n  \"enabled\": true,\n  \"attributeName\": \"environment\",\n  \"allowListValues\": [\"production\", \"staging\"]\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/toggles",
+              "raw": "http://localhost:8080/api/toggles?page=0&size=20&sort=name,asc",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -186,6 +214,20 @@
               "path": [
                 "api",
                 "toggles"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                },
+                {
+                  "key": "sort",
+                  "value": "name,asc"
+                }
               ]
             }
           },
@@ -202,7 +244,7 @@
               }
             ],
             "url": {
-              "raw": "http://localhost:8080/api/toggles",
+              "raw": "http://localhost:8080/api/toggles?page=0&size=20&sort=name,asc",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -211,6 +253,20 @@
               "path": [
                 "api",
                 "toggles"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                },
+                {
+                  "key": "sort",
+                  "value": "name,asc"
+                }
               ]
             }
           },
@@ -318,7 +374,7 @@
               }
             ],
             "url": {
-              "raw": "http://localhost:8080/api/toggles/new_feature_flag/allow-list",
+              "raw": "http://localhost:8080/api/toggles/new_feature_flag/allow-list?page=0&size=50&sort=value,asc",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -329,6 +385,20 @@
                 "toggles",
                 "new_feature_flag",
                 "allow-list"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "50"
+                },
+                {
+                  "key": "sort",
+                  "value": "value,asc"
+                }
               ]
             }
           },
@@ -394,6 +464,47 @@
                 {
                   "key": "value",
                   "value": "development"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Allow List",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "your-api-key-here"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8080/api/toggles/new_feature_flag/allow-list?page=0&size=50&sort=value,asc",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "toggles",
+                "new_feature_flag",
+                "allow-list"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "50"
+                },
+                {
+                  "key": "sort",
+                  "value": "value,asc"
                 }
               ]
             }
@@ -515,7 +626,7 @@
               }
             ],
             "url": {
-              "raw": "http://localhost:8080/api/clients",
+              "raw": "http://localhost:8080/api/clients?page=0&size=20&sort=createdAt,desc",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -524,6 +635,20 @@
               "path": [
                 "api",
                 "clients"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "20"
+                },
+                {
+                  "key": "sort",
+                  "value": "createdAt,desc"
+                }
               ]
             }
           },

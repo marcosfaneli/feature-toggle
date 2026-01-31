@@ -38,7 +38,7 @@ public class ClientRegistration {
     @Column(name = "callback_url", nullable = false, length = 1024)
     private String callbackUrl;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "client_registration_toggles", joinColumns = @JoinColumn(name = "client_registration_id"))
     @Column(name = "toggle_name", nullable = false)
     @Builder.Default

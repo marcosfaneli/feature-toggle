@@ -139,6 +139,28 @@ All API requests require an `X-API-Key` header:
 curl -H "X-API-Key: dev-local-key" http://localhost:8080/api/toggles
 ```
 
+### Pagination
+
+All list endpoints support pagination using query parameters:
+
+- `page` - Zero-based page number (default: 0)
+- `size` - Number of items per page (default: 10)
+- `sort` - Sort criteria in format `property,direction` (e.g., `name,asc`)
+
+**Paginated Response Format:**
+
+All list endpoints return a simplified pagination response containing only essential fields:
+
+```json
+{
+  "content": [...],  // Array of items for the current page
+  "page": 0,         // Current page number (zero-based)
+  "size": 20         // Number of items per page
+}
+```
+
+**Performance Note:** This optimized response format eliminates the need for expensive COUNT queries to the database, improving performance for large datasets. To determine if there are more pages, check if `content` array size equals the requested `size` - if it's less, you've reached the last page.
+
 ### Attributes API
 
 Attributes define the properties that toggles can evaluate against.
@@ -173,21 +195,25 @@ POST /api/attributes
 #### Get All Attributes
 
 ```bash
-GET /api/attributes
+GET /api/attributes?page=0&size=20&sort=name,asc
 ```
 
 **Response:** `200 OK`
 ```json
-[
-  {
-    "id": 1,
-    "name": "country",
-    "description": "User's country code",
-    "dataType": "STRING",
-    "createdAt": "2026-01-25T10:30:00",
-    "updatedAt": "2026-01-25T10:30:00"
-  }
-]
+{
+  "content": [
+    {
+      "id": 1,
+      "name": "country",
+      "description": "User's country code",
+      "dataType": "STRING",
+      "createdAt": "2026-01-25T10:30:00",
+      "updatedAt": "2026-01-25T10:30:00"
+    }
+  ],
+  "page": 0,
+  "size": 20
+}
 ```
 
 #### Get Attribute by Name
@@ -247,12 +273,16 @@ POST /api/toggles
 **Response:** `201 Created`
 ```json
 {
-  "id": 1,
   "name": "new-checkout-flow",
   "description": "Enable new checkout experience",
   "enabled": true,
-  "attributeName": "country",
-  "allowListValues": ["US", "CA", "UK"],
+  "attribute": {
+    "name": "country",
+    "description": "User's country code",
+    "dataType": "STRING",
+    "createdAt": "2026-01-25T10:30:00",
+    "updatedAt": "2026-01-25T10:30:00"
+  },
   "createdAt": "2026-01-25T10:35:00",
   "updatedAt": "2026-01-25T10:35:00"
 }
@@ -261,10 +291,32 @@ POST /api/toggles
 #### Get All Toggles
 
 ```bash
-GET /api/toggles
+GET /api/toggles?page=0&size=20&sort=name,asc
 ```
 
 **Response:** `200 OK`
+```json
+{
+  "content": [
+    {
+      "name": "new-checkout-flow",
+      "description": "Enable new checkout experience",
+      "attribute": {
+        "name": "country",
+        "description": "User's country code",
+        "dataType": "STRING",
+        "createdAt": "2026-01-25T10:30:00",
+        "updatedAt": "2026-01-25T10:30:00"
+      },
+      "enabled": true,
+      "createdAt": "2026-01-25T10:35:00",
+      "updatedAt": "2026-01-25T10:35:00"
+    }
+  ],
+  "page": 0,
+  "size": 20
+}
+```
 
 #### Get Toggle by Name
 
@@ -273,6 +325,8 @@ GET /api/toggles/{name}
 ```
 
 **Response:** `200 OK`
+
+**Note:** Allow-list values are not returned in toggle list or detail responses. Use `GET /api/toggles/{name}/allow-list` to retrieve them.
 
 #### Update Toggle
 
@@ -304,17 +358,29 @@ DELETE /api/toggles/{name}
 #### Update Allow List
 
 ```bash
-PUT /api/toggles/{name}/allow-list
-```
-
-**Request Body:**
-```json
-{
-  "values": ["US", "CA", "UK", "AU"]
-}
+POST /api/toggles/{name}/allow-list?value=US
 ```
 
 **Response:** `200 OK`
+
+```bash
+DELETE /api/toggles/{name}/allow-list?value=US
+```
+
+**Response:** `200 OK`
+
+```bash
+GET /api/toggles/{name}/allow-list?page=0&size=50&sort=value,asc
+```
+
+**Response:** `200 OK`
+```json
+{
+  "content": ["US", "CA", "UK"],
+  "page": 0,
+  "size": 50
+}
+```
 
 #### Get Toggle Clients
 
@@ -401,6 +467,29 @@ POST /api/clients/register
 }
 ```
 
+#### Get All Clients
+
+```bash
+GET /api/clients?page=0&size=20&sort=createdAt,desc
+```
+
+**Response:** `200 OK`
+```json
+{
+  "content": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "callbackUrl": "https://app.example.com/webhook",
+      "toggleNames": ["new-checkout-flow", "beta-features"],
+      "createdAt": "2026-01-25T10:40:00",
+      "updatedAt": "2026-01-25T10:40:00"
+    }
+  ],
+  "page": 0,
+  "size": 20
+}
+```
+
 #### Unregister Client
 
 ```bash
@@ -477,8 +566,8 @@ curl -X PUT "$BASE_URL/api/toggles/premium-features" \
     "allowListValues": ["north-america"]
   }'
 
-# 6. Get all toggles
-curl -X GET "$BASE_URL/api/toggles" \
+# 6. Get all toggles (paginated)
+curl -X GET "$BASE_URL/api/toggles?page=0&size=20&sort=name,asc" \
   -H "X-API-Key: $API_KEY"
 ```
 

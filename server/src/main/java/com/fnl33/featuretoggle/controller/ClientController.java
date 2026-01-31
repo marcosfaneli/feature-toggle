@@ -3,10 +3,12 @@ package com.fnl33.featuretoggle.controller;
 import com.fnl33.featuretoggle.dto.ClientRegistrationRequest;
 import com.fnl33.featuretoggle.dto.ClientRegistrationResponse;
 import com.fnl33.featuretoggle.domain.ClientRegistration;
+import com.fnl33.featuretoggle.dto.PagedResponse;
 import com.fnl33.featuretoggle.service.ClientRegistrationService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -55,13 +57,13 @@ public class ClientController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ClientRegistrationResponse>> getAllClients() {
+    public ResponseEntity<PagedResponse<ClientRegistrationResponse>> getAllClients(Pageable pageable) {
         logger.debug("Fetching all clients");
         
-        final List<ClientRegistrationResponse> clients = clientRegistrationService.findAll()
-                .stream()
-                .map(ClientRegistrationResponse::from)
-                .collect(Collectors.toList());
+        final var pagedClient = clientRegistrationService.findAll(pageable);
+        final PagedResponse<ClientRegistrationResponse> clients = PagedResponse.from(
+            pagedClient.map(ClientRegistrationResponse::from)
+        );
         
         return ResponseEntity.ok(clients);
     }

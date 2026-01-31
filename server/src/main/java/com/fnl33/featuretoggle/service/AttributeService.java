@@ -8,6 +8,8 @@ import com.fnl33.featuretoggle.service.exception.AttributeInUseException;
 import com.fnl33.featuretoggle.service.exception.AttributeNotFoundException;
 import com.fnl33.featuretoggle.service.exception.ValidationException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,8 +28,8 @@ public class AttributeService {
     private final MetricsService metricsService;
 
     @Transactional(readOnly = true)
-    public List<Attribute> findAll() {
-        return attributeRepository.findAll();
+    public Page<Attribute> findAll(Pageable pageable) {
+        return attributeRepository.findAll(pageable);
     }
 
     @Transactional(readOnly = true)
